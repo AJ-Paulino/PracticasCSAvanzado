@@ -1,0 +1,6 @@
+@PracticasCSAvanzado_HostAddress = http://localhost:5009
+
+GET {{PracticasCSAvanzado_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
