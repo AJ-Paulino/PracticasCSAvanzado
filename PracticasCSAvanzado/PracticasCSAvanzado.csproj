@@ -24,4 +24,8 @@
     <ProjectReference Include="..\InfraestructureLayer\InfraestructureLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Capturas\" />
+  </ItemGroup>
+
 </Project>
