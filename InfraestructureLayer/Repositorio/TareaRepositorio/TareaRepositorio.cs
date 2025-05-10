@@ -17,6 +17,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         {
             _practicasCSAvanzadoContext = practicasCSAvanzadoContext;
         }
+
+        //Delegado para validar la tarea
+        public delegate bool ValidarTarea(Task<string> tarea);
+
         public async Task<IEnumerable<Tarea>> GetAllAsync()
         => await _practicasCSAvanzadoContext.Tareas.ToListAsync();
 
