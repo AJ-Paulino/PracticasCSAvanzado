@@ -21,6 +21,18 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         //Delegado para validar la tarea
         public delegate bool ValidarTarea(Task<string> tarea);
 
+        ////ValidarTarea validarTarea = tarea =>
+        ////!string.IsNullOrWhiteSpace(tarea.Description) && tarea.DueDate > DateTime.Now;
+
+        ////public static bool Validacion(Tarea entry)
+        ////{
+        ////    Tarea validar = tarea => 
+        ////    !string.IsNullOrWhiteSpace(tarea) &&
+        ////    // Aquí puedes implementar la lógica de validación
+        ////    // Por ejemplo, verificar si la tarea no está vacía
+        ////    return !string.IsNullOrEmpty(tarea.Result);
+        //}
+
         public async Task<IEnumerable<Tarea>> GetAllAsync()
         => await _practicasCSAvanzadoContext.Tareas.ToListAsync();
 
@@ -31,6 +43,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         {
             try
             {
+                //Validación con delegado
+                ValidarTarea validarTarea = tareaValidada =>
+                !string.IsNullOrWhiteSpace(entry.Description) && entry.DueDate > DateTime.Now;
+
                 //Validación de tarea duplicada
                 var exists = _practicasCSAvanzadoContext.Tareas.Any(x => x.Description == entry.Description);
 
