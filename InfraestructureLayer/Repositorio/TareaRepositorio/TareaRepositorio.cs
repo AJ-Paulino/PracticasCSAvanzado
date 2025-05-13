@@ -20,7 +20,7 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         //Delegado para validar la tarea
         //public delegate bool ValidarTarea(Task<string> tarea);
-        public delegate Task<(bool validada, string mensaje)> ValidarTarea(Tarea tarea);
+        public delegate Task<(bool validada, string mensaje)> Validar(Tarea tarea);
 
         //Delegado para notificar la tarea
         public Action<string > Notificar;
@@ -49,7 +49,7 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public void NotificarTarea(string notificacion)
         {
-           Console.WriteLine($"Tarea creada. {notificacion}");
+           Console.WriteLine($"Notificación: {notificacion}");
         }
 
         public async Task<IEnumerable<Tarea>> GetAllAsync()
@@ -60,8 +60,8 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public async Task<(bool IsSuccess, string Message)> AddAsync(Tarea entry)
         {
-            ValidarTarea validar = new ValidarTarea(ValidacionTarea);
-            Notificar = notificacion => NotificarTarea(notificacion);
+            Validar validar = new Validar(ValidacionTarea);
+            Notificar = notificarTarea => NotificarTarea(notificarTarea);
 
             try
             {
@@ -92,12 +92,13 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public async Task<(bool IsSuccess, string Message)> UpdateAsync(Tarea entry)
         {
-            ValidarTarea validar = new ValidarTarea(ValidacionTarea);
+            Validar validarTarea = new Validar(ValidacionTarea);
+            Notificar = notificarTarea => NotificarTarea(notificarTarea);
 
             try
             {
                 //Validación con delegado
-                await validar(entry);
+                await validarTarea(entry);
 
                 //Validación de información igual
                 var exists = _practicasCSAvanzadoContext.Tareas.Any(x => x.Description == entry.Description);
@@ -108,6 +109,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
                 }
                 _practicasCSAvanzadoContext.Tareas.Update(entry);
                 await _practicasCSAvanzadoContext.SaveChangesAsync();
+
+                //Notificación de tarea creada con delegado
+                Notificar($"Tarea actualizada. {entry.Description}");
+
                 return (true, "Tarea actualizada correctamente.");
             }
             catch (Exception e)
