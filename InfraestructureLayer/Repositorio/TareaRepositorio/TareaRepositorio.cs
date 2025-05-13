@@ -19,19 +19,30 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         }
 
         //Delegado para validar la tarea
-        public delegate bool ValidarTarea(Task<string> tarea);
+        //public delegate bool ValidarTarea(Task<string> tarea);
+        public delegate Task<(bool validada, string mensaje)> ValidarTarea(Tarea tarea);
 
-        ////ValidarTarea validarTarea = tarea =>
-        ////!string.IsNullOrWhiteSpace(tarea.Description) && tarea.DueDate > DateTime.Now;
+        public async Task<(bool validada, string Message)> ValidacionTarea(Tarea entry)
+        {
+            try
+            {
+                bool validarTarea = !string.IsNullOrWhiteSpace(entry.Description) && entry.DueDate > DateTime.Now;
 
-        ////public static bool Validacion(Tarea entry)
-        ////{
-        ////    Tarea validar = tarea => 
-        ////    !string.IsNullOrWhiteSpace(tarea) &&
-        ////    // Aquí puedes implementar la lógica de validación
-        ////    // Por ejemplo, verificar si la tarea no está vacía
-        ////    return !string.IsNullOrEmpty(tarea.Result);
-        //}
+                if (validarTarea)
+                {
+                    return (true, "Tarea validada.");
+                }
+                else
+                {
+                    return (false, "La tarea no es válida o está repetida.");
+                }
+            }
+            catch (Exception e)
+            {
+                return (false, $"Error en la validación de la tarea: {e.Message}");
+            }
+            
+        }
 
         public async Task<IEnumerable<Tarea>> GetAllAsync()
         => await _practicasCSAvanzadoContext.Tareas.ToListAsync();
@@ -44,8 +55,8 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
             try
             {
                 //Validación con delegado
-                ValidarTarea validarTarea = tareaValidada =>
-                !string.IsNullOrWhiteSpace(entry.Description) && entry.DueDate > DateTime.Now;
+                ValidarTarea validar = new ValidarTarea(ValidacionTarea);
+                await validar(entry);
 
                 //Validación de tarea duplicada
                 var exists = _practicasCSAvanzadoContext.Tareas.Any(x => x.Description == entry.Description);
