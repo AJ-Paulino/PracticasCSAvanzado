@@ -22,6 +22,9 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         //public delegate bool ValidarTarea(Task<string> tarea);
         public delegate Task<(bool validada, string mensaje)> ValidarTarea(Tarea tarea);
 
+        //Delegado para notificar la tarea
+        public Action<string > Notificar;
+
         public async Task<(bool validada, string Message)> ValidacionTarea(Tarea entry)
         {
             try
@@ -44,6 +47,11 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
             
         }
 
+        public void NotificarTarea(string notificacion)
+        {
+           Console.WriteLine($"Tarea creada. {notificacion}");
+        }
+
         public async Task<IEnumerable<Tarea>> GetAllAsync()
         => await _practicasCSAvanzadoContext.Tareas.ToListAsync();
 
@@ -52,10 +60,12 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public async Task<(bool IsSuccess, string Message)> AddAsync(Tarea entry)
         {
+            ValidarTarea validar = new ValidarTarea(ValidacionTarea);
+            Notificar = notificacion => NotificarTarea(notificacion);
+
             try
             {
                 //Validación con delegado
-                ValidarTarea validar = new ValidarTarea(ValidacionTarea);
                 await validar(entry);
 
                 //Validación de tarea duplicada
@@ -68,6 +78,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
                 await _practicasCSAvanzadoContext.Tareas.AddAsync(entry);
                 await _practicasCSAvanzadoContext.SaveChangesAsync();
+
+                //Notificación de tarea creada con delegado
+                Notificar($"Tarea creada. {entry.Description}");
+
                 return (true, "Tarea guardada correctamente.");
             }
             catch (Exception e)
@@ -78,8 +92,13 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public async Task<(bool IsSuccess, string Message)> UpdateAsync(Tarea entry)
         {
+            ValidarTarea validar = new ValidarTarea(ValidacionTarea);
+
             try
             {
+                //Validación con delegado
+                await validar(entry);
+
                 //Validación de información igual
                 var exists = _practicasCSAvanzadoContext.Tareas.Any(x => x.Description == entry.Description);
 
