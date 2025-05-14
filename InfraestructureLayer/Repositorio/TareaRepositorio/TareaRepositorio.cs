@@ -19,11 +19,13 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         }
 
         //Delegado para validar la tarea
-        //public delegate bool ValidarTarea(Task<string> tarea);
         public delegate Task<(bool validada, string mensaje)> Validar(Tarea tarea);
 
         //Delegado para notificar la tarea
-        public Action<string > Notificar;
+        public Action<string> Notificar;
+
+        //Delegado para notificar días restantes de la tarea
+        public Func<Tarea, int> CalcularDiasRestantes;
 
         public async Task<(bool validada, string Message)> ValidacionTarea(Tarea entry)
         {
@@ -44,13 +46,13 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
             {
                 return (false, $"Error en la validación de la tarea: {e.Message}");
             }
-            
+
         }
 
         public void NotificarTarea(string notificacion)
         {
-           Console.WriteLine($"Notificación: {notificacion}");
-        }
+            Console.WriteLine($"Notificación: {notificacion}");
+        }       
 
         public async Task<IEnumerable<Tarea>> GetAllAsync()
         => await _practicasCSAvanzadoContext.Tareas.ToListAsync();
@@ -60,8 +62,12 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
         public async Task<(bool IsSuccess, string Message)> AddAsync(Tarea entry)
         {
+            //Delegaciones
             Validar validar = new Validar(ValidacionTarea);
+
             Notificar = notificarTarea => NotificarTarea(notificarTarea);
+
+            CalcularDiasRestantes = entry => (entry.DueDate - DateTime.Now).Days;            
 
             try
             {
@@ -79,8 +85,12 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
                 await _practicasCSAvanzadoContext.Tareas.AddAsync(entry);
                 await _practicasCSAvanzadoContext.SaveChangesAsync();
 
-                //Notificación de tarea creada con delegado
+                //Notificación de tarea creada con Action
                 Notificar($"Tarea creada. {entry.Description}");
+
+                //Notificación de días restantes con Func
+                int diasRestantes = CalcularDiasRestantes(entry);
+                Console.WriteLine($"Días restantes para completar la tarea {entry.Description}: {diasRestantes}");
 
                 return (true, "Tarea guardada correctamente.");
             }
@@ -126,7 +136,7 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
             try
             {
                 var tarea = await _practicasCSAvanzadoContext.Tareas.FindAsync(id);
-                if ( tarea != null)
+                if (tarea != null)
                 {
                     _practicasCSAvanzadoContext.Tareas.Remove(tarea);
                     await _practicasCSAvanzadoContext.SaveChangesAsync();
@@ -141,6 +151,6 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
             {
                 return (false, $"No se pudo eliminar la tarea. {e.Message}");
             }
-        }                
+        }
     }
 }
