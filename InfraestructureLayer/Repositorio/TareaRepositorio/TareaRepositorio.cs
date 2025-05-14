@@ -103,7 +103,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
         public async Task<(bool IsSuccess, string Message)> UpdateAsync(Tarea entry)
         {
             Validar validarTarea = new Validar(ValidacionTarea);
+
             Notificar = notificarTarea => NotificarTarea(notificarTarea);
+
+            CalcularDiasRestantes = entry => (entry.DueDate - DateTime.Now).Days;
 
             try
             {
@@ -122,6 +125,10 @@ namespace InfraestructureLayer.Repositorio.TareaRepositorio
 
                 //Notificación de tarea creada con delegado
                 Notificar($"Tarea actualizada. {entry.Description}");
+
+                //Notificación de días restantes con Func
+                int diasRestantes = CalcularDiasRestantes(entry);
+                Console.WriteLine($"Días restantes para completar la tarea {entry.Description}: {diasRestantes}");
 
                 return (true, "Tarea actualizada correctamente.");
             }
