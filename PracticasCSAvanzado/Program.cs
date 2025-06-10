@@ -4,10 +4,15 @@ using InfraestructureLayer.Context;
 using InfraestructureLayer.Repositorio.Commons;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
 using Microsoft.EntityFrameworkCore;
+using PracticasCSAvanzado;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddSingleton<ManejadorTareasSecuencial>();
+builder.Services.AddSingleton<ITareaFactory, Factory>();
+
 
 builder.Services.AddControllers();
 
