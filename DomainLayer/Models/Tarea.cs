@@ -18,4 +18,9 @@ namespace DomainLayer.Models
         public string Status { get; set; }
         public string AditionalData { get; set; }
     }
+
+    public interface ITareaFactory
+    {
+        Tarea TareaAltaPrioridad(string descripcion);
+    }
 }
