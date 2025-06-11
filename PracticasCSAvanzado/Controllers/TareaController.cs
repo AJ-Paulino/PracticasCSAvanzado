@@ -3,6 +3,8 @@ using DomainLayer.Models;
 using DomainLayer.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using InfraestructureLayer.Context;
+using InfraestructureLayer.Repositorio.TareaRepositorio;
 
 namespace PracticasCSAvanzado.Controllers
 {
@@ -45,7 +47,7 @@ namespace PracticasCSAvanzado.Controllers
                 Console.WriteLine($"Tarea completada: {tarea.Description}");
             });
             return Accepted("Tarea en cola. Se notificará cuando esté completa.");
-        }
+        }              
 
         [HttpPut]
         public async Task<ActionResult<Response<string>>> UpdateTaskAllAsync(Tarea tarea)
