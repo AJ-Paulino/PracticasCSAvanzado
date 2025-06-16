@@ -5,14 +5,39 @@ using InfraestructureLayer.Repositorio.Commons;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
 using Microsoft.EntityFrameworkCore;
 using PracticasCSAvanzado;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using PracticasCSAvanzado.Custom;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Authorization y Authentication
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(config =>
+{
+    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(config =>
+{
+    config.RequireHttpsMetadata = false;
+    config.SaveToken = true;
+    config.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!))
+    };
+});
 
 // Add services to the container.
 
 builder.Services.AddSingleton<ManejadorTareasSecuencial>();
 builder.Services.AddSingleton<ITareaFactory, Factory>();
-
+builder.Services.AddSingleton<PracticasCSAvanzado.Custom.Utility>();
 
 builder.Services.AddControllers();
 
@@ -49,6 +74,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
