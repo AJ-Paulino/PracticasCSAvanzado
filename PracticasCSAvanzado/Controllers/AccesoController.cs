@@ -30,7 +30,9 @@ namespace PracticasCSAvanzado.Controllers
             {
                 Nombre = usuario.Nombre,
                 Email = usuario.Email,
-                Password = _utility.EncriptarSHA256(usuario.Password)
+                Password = _utility.EncriptarSHA256(usuario.Password),
+                FechaRegistro = usuario.FechaRegistro,
+                Rol = usuario.Rol
             };
 
             await _practicasCSAvanzadoContext.Usuarios.AddAsync(modeloUsuario);
