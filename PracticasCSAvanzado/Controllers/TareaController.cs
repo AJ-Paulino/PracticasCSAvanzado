@@ -5,22 +5,30 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using InfraestructureLayer.Context;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using PracticasCSAvanzado.Custom;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace PracticasCSAvanzado.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class TareaController : ControllerBase
     {
         private readonly TareaService _service;
         private readonly ManejadorTareasSecuencial _manejadorTareas;
         private readonly ITareaFactory _factory;
+        private readonly PracticasCSAvanzadoContext _practicasCSAvanzadoContext;
 
-        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory)
+        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory, PracticasCSAvanzadoContext practicasCSAvanzadoContext)
         {
             _service = service;
             _manejadorTareas = manejadorTareas;
             _factory = factory;
+            _practicasCSAvanzadoContext = practicasCSAvanzadoContext;
         }
 
 
