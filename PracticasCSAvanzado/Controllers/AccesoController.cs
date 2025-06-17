@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DomainLayer.DTO;
+using DomainLayer.Models;
+using InfraestructureLayer.Context;
+using InfraestructureLayer.Repositorio.Commons;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PracticasCSAvanzado.Custom;
-using InfraestructureLayer.Context;
-using DomainLayer.Models;
-using DomainLayer.DTO;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PracticasCSAvanzado.Controllers
 {
@@ -56,7 +57,27 @@ namespace PracticasCSAvanzado.Controllers
             if (usuarioRegistrado == null)
                 return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "Usuario o contraseña incorrecta." });
             else
-                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, message = $"Bienvenido {usuarioRegistrado.Nombre}.", token = _utility.GenerarJWT(usuarioRegistrado)});
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, message = $"Bienvenido {usuarioRegistrado.Nombre}.", token = _utility.GenerarJWT(usuarioRegistrado) });
+        }
+
+        [HttpDelete]
+        [Route("Eliminar_Usuario/{id}")]
+        public async Task<IActionResult> DeleteUserAllAsync(int id)
+        {
+
+            var usuario = await _practicasCSAvanzadoContext.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                _practicasCSAvanzadoContext.Usuarios.Remove(usuario);
+                await _practicasCSAvanzadoContext.SaveChangesAsync();
+
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, message = "Usuario eliminado." });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "No se pudo eliminar el usuario." });
+            }
+
         }
     }
 }

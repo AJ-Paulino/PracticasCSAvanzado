@@ -40,7 +40,7 @@ namespace PracticasCSAvanzado.Custom
                 new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
                 new Claim(ClaimTypes.Name, model.Nombre),
                 new Claim(ClaimTypes.Email, model.Email),
-                new Claim(ClaimTypes.Role, model.Rol)
+                new Claim(ClaimTypes.Role, model.Rol!)
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]!));

@@ -33,18 +33,22 @@ namespace PracticasCSAvanzado.Controllers
 
 
         [HttpGet]
+        [Route("Obtener")]
         public async Task<ActionResult<Response<Tarea>>> GetTaskAllAsync()
             => await _service.GetTaskAllAsync();
 
         [HttpGet("{id}")]
+        [Route("Obtener/{id}")]
         public async Task<ActionResult<Response<Tarea>>> GetTaskByIdAllAsync(int id)
             => await _service.GetTaskByIdAllAsync(id);
 
         [HttpPost]
+        [Route("Crear")]
         public async Task<ActionResult<Response<string>>> AddTaskAllAsync(Tarea tarea)
             => await _service.AddTaskAllAsync(tarea);
 
         [HttpPost]
+        [Route("CrearTareaAltaPrioridad")]
         public IActionResult CrearTarea([FromBody] TareaRequest request)
         {
             _manejadorTareas.AgregarTarea(async () =>
@@ -58,10 +62,12 @@ namespace PracticasCSAvanzado.Controllers
         }              
 
         [HttpPut]
+        [Route("Actualizar")]
         public async Task<ActionResult<Response<string>>> UpdateTaskAllAsync(Tarea tarea)
             => await _service.UpdateTaskAllAsync(tarea);
 
         [HttpDelete("{id}")]
+        [Route("Eliminar/{id}")]
         public async Task<ActionResult<Response<string>>> DeleteTaskAllAsync(int id)
             => await _service.DeleteTaskAllAsync(id);
     }
