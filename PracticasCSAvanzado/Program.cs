@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using PracticasCSAvanzado.Custom;
+using PracticasCSAvanzado.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,5 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/recibirNotificacion");
 
 app.Run();
