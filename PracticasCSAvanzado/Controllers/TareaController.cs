@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using PracticasCSAvanzado.Custom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
+using PracticasCSAvanzado.Hubs;
 
 namespace PracticasCSAvanzado.Controllers
 {
@@ -22,13 +24,16 @@ namespace PracticasCSAvanzado.Controllers
         private readonly ManejadorTareasSecuencial _manejadorTareas;
         private readonly ITareaFactory _factory;
         private readonly PracticasCSAvanzadoContext _practicasCSAvanzadoContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory, PracticasCSAvanzadoContext practicasCSAvanzadoContext)
+        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory, 
+            PracticasCSAvanzadoContext practicasCSAvanzadoContext, IHubContext<NotificationHub> hubContext)
         {
             _service = service;
             _manejadorTareas = manejadorTareas;
             _factory = factory;
             _practicasCSAvanzadoContext = practicasCSAvanzadoContext;
+            _hubContext = hubContext;
         }
 
 
@@ -70,5 +75,13 @@ namespace PracticasCSAvanzado.Controllers
         [Route("Eliminar/{id}")]
         public async Task<ActionResult<Response<string>>> DeleteTaskAllAsync(int id)
             => await _service.DeleteTaskAllAsync(id);
+
+        [HttpPost]
+        [Route("EnviarNotificacion")]
+        public async Task<IActionResult> EnviarNotificacion(string mensaje)
+        {
+            await _hubContext.Clients.All.SendAsync("recibirNotificacion", mensaje);
+            return Ok("Notificación enviada a todos los clientes conectados.");
+        }
     }
 }
