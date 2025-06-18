@@ -80,7 +80,7 @@ namespace PracticasCSAvanzado.Controllers
         [Route("EnviarNotificacion")]
         public async Task<IActionResult> EnviarNotificacion(string mensaje)
         {
-            await _hubContext.Clients.All.SendAsync("recibirNotificacion", mensaje);
+            await _hubContext.Clients.All.SendAsync("recibirNotificacion1", mensaje);
             return Ok("Notificación enviada a todos los clientes conectados.");
         }
     }
