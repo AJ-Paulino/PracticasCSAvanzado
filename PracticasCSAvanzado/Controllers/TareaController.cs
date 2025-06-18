@@ -1,17 +1,18 @@
 ﻿using ApplicationLayer.Services.TareaServices;
-using DomainLayer.Models;
 using DomainLayer.DTO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using DomainLayer.Models;
 using InfraestructureLayer.Context;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PracticasCSAvanzado.Custom;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using PracticasCSAvanzado.Hubs;
+using System.Threading;
 
 namespace PracticasCSAvanzado.Controllers
 {
@@ -50,7 +51,12 @@ namespace PracticasCSAvanzado.Controllers
         [HttpPost]
         [Route("Crear")]
         public async Task<ActionResult<Response<string>>> AddTaskAllAsync(Tarea tarea)
-            => await _service.AddTaskAllAsync(tarea);
+        {
+            await _service.AddTaskAllAsync(tarea);
+
+            await _hubContext.Clients.All.SendAsync("recibirNotificacion", tarea);
+            return Ok("Notificación de creación de tarea enviada a todos los clientes conectados.");
+        }
 
         [HttpPost]
         [Route("CrearTareaAltaPrioridad")]
@@ -62,8 +68,11 @@ namespace PracticasCSAvanzado.Controllers
                 Console.WriteLine($"Procesando: {tarea.Description}");
                 await Task.Delay(1000);
                 Console.WriteLine($"Tarea completada: {tarea.Description}");
+
+                await _hubContext.Clients.All.SendAsync("recibirNotificacion", request);
+                Ok("Notificación de creación de tarea de alta prioridad enviada a todos los clientes conectados.");
             });
-            return Accepted("Tarea en cola. Se notificará cuando esté completa.");
+            return Accepted("Tarea en cola. Se notificará cuando esté completa.");            
         }              
 
         [HttpPut]
@@ -80,8 +89,8 @@ namespace PracticasCSAvanzado.Controllers
         [Route("EnviarNotificacion")]
         public async Task<IActionResult> EnviarNotificacion(string mensaje)
         {
-            await _hubContext.Clients.All.SendAsync("recibirNotificacion1", mensaje);
-            return Ok("Notificación enviada a todos los clientes conectados.");
+            await _hubContext.Clients.All.SendAsync("recibirNotificacion", mensaje);
+            return Ok("Notificación de creación de tarea enviada a todos los clientes conectados.");
         }
     }
 }

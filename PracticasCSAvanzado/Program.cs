@@ -3,13 +3,14 @@ using DomainLayer.Models;
 using InfraestructureLayer.Context;
 using InfraestructureLayer.Repositorio.Commons;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
-using Microsoft.EntityFrameworkCore;
-using PracticasCSAvanzado;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using PracticasCSAvanzado;
 using PracticasCSAvanzado.Custom;
 using PracticasCSAvanzado.Hubs;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,3 +88,25 @@ app.MapControllers();
 app.MapHub<NotificationHub>("/recibirNotificacion");
 
 app.Run();
+
+string url = "https://localhost:7009/recibirNotificacion";
+
+var connection = new HubConnectionBuilder()
+    .WithUrl(url)
+    .Build();
+
+connection.On<string>("recibirNotificacion", (message) =>
+{
+    Console.WriteLine($"Mensaje recibido: {message}");
+});
+
+try
+{
+    await connection.StartAsync();
+    Console.WriteLine("Conexión establecida con el hub.");
+}
+catch (Exception e)
+{
+    Console.WriteLine($"Error al conectar con el hub: {e.Message}");
+}
+Console.ReadLine();
