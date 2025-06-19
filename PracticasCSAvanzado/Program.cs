@@ -4,10 +4,12 @@ using InfraestructureLayer.Context;
 using InfraestructureLayer.Repositorio.Commons;
 using InfraestructureLayer.Repositorio.TareaRepositorio;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PracticasCSAvanzado;
+using PracticasCSAvanzado.ClientesConectados;
 using PracticasCSAvanzado.Custom;
 using PracticasCSAvanzado.Hubs;
 using System.Text;
@@ -40,6 +42,7 @@ builder.Services.AddAuthentication(config =>
 builder.Services.AddSingleton<ManejadorTareasSecuencial>();
 builder.Services.AddSingleton<ITareaFactory, Factory>();
 builder.Services.AddSingleton<PracticasCSAvanzado.Custom.Utility>();
+//builder.Services.AddSingleton<NotificationHub>();
 
 builder.Services.AddControllers();
 
@@ -50,6 +53,7 @@ builder.Services.AddDbContext<PracticasCSAvanzadoContext>(options =>
 
 builder.Services.AddScoped<ICommonsProcess<Tarea>, TareaRepositorio>();
 builder.Services.AddScoped<TareaService>();
+//builder.Services.AddScoped<NotificationHub>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -86,27 +90,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<NotificationHub>("/recibirNotificacion");
+//var clienteSignalR = new CCAplicacion1("https://localhost:7009/recibirNotificacion");
+//await clienteSignalR.ConectarAsync();
 
-app.Run();
-
-string url = "https://localhost:7009/recibirNotificacion";
-
-var connection = new HubConnectionBuilder()
-    .WithUrl(url)
-    .Build();
-
-connection.On<string>("recibirNotificacion", (message) =>
+app.Lifetime.ApplicationStarted.Register(() =>
 {
-    Console.WriteLine($"Mensaje recibido: {message}");
+    Task.Run(async () =>
+    {
+        var clienteSignalR = new CCAplicacion1("https://localhost:7009/recibirNotificacion");
+        await clienteSignalR.ConectarAsync();
+    });
 });
 
-try
-{
-    await connection.StartAsync();
-    Console.WriteLine("Conexión establecida con el hub.");
-}
-catch (Exception e)
-{
-    Console.WriteLine($"Error al conectar con el hub: {e.Message}");
-}
-Console.ReadLine();
+app.Run();

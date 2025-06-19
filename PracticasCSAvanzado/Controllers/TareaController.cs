@@ -17,7 +17,7 @@ using System.Threading;
 namespace PracticasCSAvanzado.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class TareaController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace PracticasCSAvanzado.Controllers
         private readonly PracticasCSAvanzadoContext _practicasCSAvanzadoContext;
         private readonly IHubContext<NotificationHub> _hubContext;
 
-        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory, 
+        public TareaController(TareaService service, ManejadorTareasSecuencial manejadorTareas, ITareaFactory factory,
             PracticasCSAvanzadoContext practicasCSAvanzadoContext, IHubContext<NotificationHub> hubContext)
         {
             _service = service;
@@ -43,7 +43,7 @@ namespace PracticasCSAvanzado.Controllers
         public async Task<ActionResult<Response<Tarea>>> GetTaskAllAsync()
             => await _service.GetTaskAllAsync();
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Route("Obtener/{id}")]
         public async Task<ActionResult<Response<Tarea>>> GetTaskByIdAllAsync(int id)
             => await _service.GetTaskByIdAllAsync(id);
@@ -72,15 +72,15 @@ namespace PracticasCSAvanzado.Controllers
                 await _hubContext.Clients.All.SendAsync("recibirNotificacion", request);
                 Ok("Notificación de creación de tarea de alta prioridad enviada a todos los clientes conectados.");
             });
-            return Accepted("Tarea en cola. Se notificará cuando esté completa.");            
-        }              
+            return Accepted("Tarea en cola. Se notificará cuando esté completa.");
+        }
 
         [HttpPut]
         [Route("Actualizar")]
         public async Task<ActionResult<Response<string>>> UpdateTaskAllAsync(Tarea tarea)
             => await _service.UpdateTaskAllAsync(tarea);
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Route("Eliminar/{id}")]
         public async Task<ActionResult<Response<string>>> DeleteTaskAllAsync(int id)
             => await _service.DeleteTaskAllAsync(id);
