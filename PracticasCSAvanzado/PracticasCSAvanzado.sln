@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticasCSAvanzado", "PracticasCSAvanzado.csproj", "{903F24FE-4F47-48B3-A00B-D29E68FC4F9A}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainLayer", "..\DomainLayer\DomainLayer.csproj", "{A6613BEA-6A36-4615-8FFA-7C2EB6ECCCC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfraestructureLayer", "..\InfraestructureLayer\InfraestructureLayer.csproj", "{6FD59B33-438B-4B05-B83E-2CD60C9C39D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnitTest", "..\xUnitTest\xUnitTest.csproj", "{B74C9DAE-AC12-4DFE-AF9C-658E0B792046}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6FD59B33-438B-4B05-B83E-2CD60C9C39D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD59B33-438B-4B05-B83E-2CD60C9C39D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD59B33-438B-4B05-B83E-2CD60C9C39D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B74C9DAE-AC12-4DFE-AF9C-658E0B792046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B74C9DAE-AC12-4DFE-AF9C-658E0B792046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B74C9DAE-AC12-4DFE-AF9C-658E0B792046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B74C9DAE-AC12-4DFE-AF9C-658E0B792046}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
