@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Azure.Core.HttpHeader;
 
 namespace ApplicationLayer.Services.TareaServices
 {
@@ -25,6 +26,24 @@ namespace ApplicationLayer.Services.TareaServices
             {
                 response.DataList = await _commonsProcess.GetAllAsync();
                 response.Succesful = true;
+
+
+                var tareas = await _commonsProcess.GetAllAsync();
+                if (tareas == null || !tareas.Any())
+                {
+                    return new Response<Tarea>
+                    {
+                        Succesful = false,
+                        Message = "No hay tareas disponibles."
+                    };
+                }
+
+                return new Response<Tarea>
+                {
+                    Succesful = true,
+                    DataList = tareas
+                };
+
             }
             catch (Exception e)
             {
