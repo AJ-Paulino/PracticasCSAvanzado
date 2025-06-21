@@ -18,7 +18,7 @@ namespace PracticasCSAvanzado.Controllers
 
         private readonly Utility _utility;
         private readonly PracticasCSAvanzadoContext _practicasCSAvanzadoContext;
-        //private readonly Utility _utility;
+        //private readonly IUtility _utility;
         public AccesoController(PracticasCSAvanzadoContext practicasCSAvanzadoContext, Utility utility)
         {
             _practicasCSAvanzadoContext = practicasCSAvanzadoContext;
