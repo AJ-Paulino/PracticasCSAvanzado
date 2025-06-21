@@ -8,7 +8,7 @@ using DomainLayer.Models;
 
 namespace PracticasCSAvanzado.Custom
 {
-    public class Utility : IUtility
+    public class Utility
     {
         private readonly IConfiguration _configuration;
         public Utility(IConfiguration configuration)

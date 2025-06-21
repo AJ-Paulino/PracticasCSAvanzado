@@ -16,10 +16,10 @@ namespace PracticasCSAvanzado.Controllers
     public class AccesoController : ControllerBase
     {
 
-        private readonly IUtility _utility;
+        private readonly Utility _utility;
         private readonly PracticasCSAvanzadoContext _practicasCSAvanzadoContext;
         //private readonly Utility _utility;
-        public AccesoController(PracticasCSAvanzadoContext practicasCSAvanzadoContext, IUtility utility)
+        public AccesoController(PracticasCSAvanzadoContext practicasCSAvanzadoContext, Utility utility)
         {
             _practicasCSAvanzadoContext = practicasCSAvanzadoContext;
             _utility = utility;
